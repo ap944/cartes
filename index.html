@@ -19,29 +19,29 @@
 <title>Cartes</title>
 <style>
 :root {
-  --bg: #f5f7fa;
-  --bg-elev: #ffffff;
-  --bg-soft: #eef1f6;
-  --ink: #1c1e22;
-  --ink-soft: #6c7280;
-  --ink-muted: #9aa0aa;
-  --line: #e5e8ee;
-  --primary: #4f7cff;
-  --primary-deep: #3a63d6;
-  --primary-soft: #e8efff;
+  --bg: #0a0c0f;
+  --bg-elev: #1e222a;
+  --bg-soft: #2a2f38;
+  --ink: #f0f2f6;
+  --ink-soft: #a0a6b0;
+  --ink-muted: #6c7280;
+  --line: #353b46;
+  --primary: #5b8aff;
+  --primary-deep: #4f7cff;
+  --primary-soft: rgba(79, 124, 255, 0.18);
   --green: #34c759;
-  --green-soft: #e1f5e3;
+  --green-soft: rgba(52, 199, 89, 0.18);
   --green-dark: #1a8f3c;
   --green-light: #6dd58c;
   --orange: #ff9500;
-  --orange-soft: #ffefd6;
+  --orange-soft: rgba(255, 149, 0, 0.18);
   --red: #ff3b30;
-  --red-soft: #ffe4e1;
+  --red-soft: rgba(255, 59, 48, 0.18);
   --purple: #af52de;
-  --purple-soft: #f3e8fa;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --purple-soft: rgba(175, 82, 222, 0.18);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
   --radius: 14px;
   --radius-lg: 22px;
 }
@@ -178,6 +178,13 @@ body {
   stroke-width: 14;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.progress-circle-wrap[role="button"] {
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.progress-circle-wrap[role="button"]:active {
+  transform: scale(0.96);
 }
 .progress-center {
   position: absolute;
@@ -747,27 +754,7 @@ body {
   .progress-center .num { font-size: 38px; }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0a0c0f;
-    --bg-elev: #1e222a;
-    --bg-soft: #2a2f38;
-    --ink: #f0f2f6;
-    --ink-soft: #a0a6b0;
-    --ink-muted: #6c7280;
-    --line: #353b46;
-    --primary: #5b8aff;
-    --primary-deep: #4f7cff;
-    --primary-soft: rgba(79, 124, 255, 0.18);
-    --green-soft: rgba(52, 199, 89, 0.18);
-    --orange-soft: rgba(255, 149, 0, 0.18);
-    --red-soft: rgba(255, 59, 48, 0.18);
-    --purple-soft: rgba(175, 82, 222, 0.18);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
-  }
-  .card { border: 1px solid var(--line); }
-}
+.card { border: 1px solid var(--line); }
 </style>
 </head>
 <body>
@@ -789,7 +776,7 @@ body {
         <div class="subtitle">Frans · Nederlands</div>
       </div>
 
-      <div class="progress-circle-wrap">
+      <div class="progress-circle-wrap" id="start-circle" data-action="start" role="button" tabindex="0" aria-label="Start sessie">
         <svg class="progress-circle" viewBox="0 0 120 120">
           <defs>
             <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -802,9 +789,7 @@ body {
                   stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
         </svg>
         <div class="progress-center">
-          <div class="num" id="prog-known">0</div>
-          <div class="total">van 2500 woorden</div>
-          <div class="label">Beheerst</div>
+          <div class="num" id="prog-known">Start</div>
         </div>
       </div>
 
@@ -819,11 +804,6 @@ body {
           <span class="phase-label" id="phase-due">— te oefenen</span>
         </div>
       </div>
-
-      <button class="start-btn" id="start-btn" data-action="start">
-        Start
-        <span class="sub" id="start-sub">25 woorden</span>
-      </button>
     </div>
   </div>
 
@@ -886,10 +866,10 @@ body {
               </div>
             </div>
 
-            <div class="drag-hint left" id="hint-left">Again</div>
-            <div class="drag-hint right" id="hint-right">Good</div>
-            <div class="drag-hint up" id="hint-up">Hard</div>
-            <div class="drag-hint down" id="hint-down">Easy</div>
+            <div class="drag-hint left" id="hint-left">Twijfel</div>
+            <div class="drag-hint right" id="hint-right">Twijfel</div>
+            <div class="drag-hint up" id="hint-up">Geen idee</div>
+            <div class="drag-hint down" id="hint-down">Wist ik meteen</div>
           </div>
         </div>
       </div>
@@ -3964,7 +3944,7 @@ function phaseClass(phase) {
 
 function renderHome() {
   const total = totalMastered();
-  document.getElementById('prog-known').textContent = total;
+  document.getElementById('prog-known').textContent = 'Start';
   // Cirkel
   const circumference = 2 * Math.PI * 52;  // ~326.7
   const pct = total / WORDS.length;
@@ -3992,14 +3972,14 @@ function renderHome() {
   }
   document.getElementById('phase-due').textContent = `${dueCount} te oefenen`;
 
-  // Start-button info
-  const btn = document.getElementById('start-btn');
+  // Cirkel disabled als alles klaar
+  const circle = document.getElementById('start-circle');
   if (state.progress.currentLevel > TOTAL_LEVELS) {
-    document.getElementById('start-sub').textContent = 'Alle niveaus voltooid!';
-    btn.disabled = true;
+    circle.removeAttribute('data-action');
+    circle.style.opacity = '0.5';
   } else {
-    document.getElementById('start-sub').textContent = `${SESSION_LENGTH} woorden`;
-    btn.disabled = false;
+    circle.setAttribute('data-action', 'start');
+    circle.style.opacity = '';
   }
 }
 
