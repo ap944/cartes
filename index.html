@@ -31,6 +31,8 @@
   --primary-soft: #e8efff;
   --green: #34c759;
   --green-soft: #e1f5e3;
+  --green-dark: #1a8f3c;
+  --green-light: #6dd58c;
   --orange: #ff9500;
   --orange-soft: #ffefd6;
   --red: #ff3b30;
@@ -469,86 +471,39 @@ body {
   line-height: 1.4;
 }
 
-/* Drag indicators (boven, onder, links, rechts) - aan de uiterste rand */
+/* Drag indicators — groot en centraal zichtbaar */
 .drag-hint {
   position: absolute;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 6px 12px;
-  border-radius: 999px;
+  padding: 0;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.15s;
-  background: var(--bg-elev);
-  border: 2px solid currentColor;
-  box-shadow: var(--shadow-md);
   z-index: 5;
   white-space: nowrap;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
 }
-.drag-hint.left { left: 12px; top: 14px; color: var(--red); }
-.drag-hint.right { right: 12px; top: 14px; color: var(--green); }
-.drag-hint.up { left: 50%; top: 14px; transform: translateX(-50%); color: var(--orange); }
-.drag-hint.down { left: 50%; bottom: 14px; transform: translateX(-50%); color: var(--purple); }
+.drag-hint.left { color: var(--red); }
+.drag-hint.right { color: var(--green-dark); }
+.drag-hint.up { color: var(--purple); }
+.drag-hint.down { color: var(--green-light); }
 
 /* Tijdens slepen: tags onzichtbaar maken zodat ze niet conflicteren met hints */
 .card.dragging .card-tag-row { opacity: 0.3; transition: opacity 0.15s; }
 
-/* Action buttons (alternatief voor swipe) */
-.swipe-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 8px;
-  margin-top: 12px;
-}
-.swipe-actions .ac {
-  background: var(--bg-elev);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 14px 6px;
-  cursor: pointer;
-  font-family: inherit;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  transition: transform 0.1s, background 0.15s;
-}
-.swipe-actions .ac:active { transform: scale(0.96); }
-.swipe-actions .ac .lab { font-size: 13px; font-weight: 600; }
-.swipe-actions .ac .ac-icon {
-  width: 22px;
-  height: 22px;
-  stroke-width: 2.4;
-  display: block;
-}
-.swipe-actions .ac.again { color: var(--red); }
-.swipe-actions .ac.again:active { background: var(--red-soft); }
-.swipe-actions .ac.hard { color: var(--orange); }
-.swipe-actions .ac.hard:active { background: var(--orange-soft); }
-.swipe-actions .ac.good { color: var(--green); }
-.swipe-actions .ac.good:active { background: var(--green-soft); }
-.swipe-actions .ac.easy { color: var(--purple); }
-.swipe-actions .ac.easy:active { background: var(--purple-soft); }
+/* Card drag kleuring */
+.card.drag-again { background: rgba(255, 59, 48, 0.12); border: 4px solid var(--red); }
+.card.drag-hard { background: rgba(175, 82, 222, 0.12); border: 4px solid var(--purple); }
+.card.drag-good { background: rgba(26, 143, 60, 0.12); border: 4px solid var(--green-dark); }
+.card.drag-easy { background: rgba(109, 213, 140, 0.18); border: 4px solid var(--green-light); }
 
-.reveal-btn {
-  width: 100%;
-  background: var(--ink);
-  color: white;
-  border: none;
-  font-family: inherit;
-  font-size: 16px;
-  font-weight: 600;
-  padding: 16px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  letter-spacing: 0.05em;
-  margin-top: 12px;
-  transition: transform 0.1s;
-  -webkit-appearance: none;
-}
-.reveal-btn:active { transform: scale(0.98); }
+/* Swipe-actions en reveal-btn verborgen — alleen swipe */
+.swipe-actions { display: none !important; }
+.reveal-btn { display: none !important; }
 
 /* ============ SUMMARY / FELICITATIE ============ */
 .summary {
@@ -658,10 +613,20 @@ body {
   font-size: 80px;
   animation: bounce 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.celebration-icon.hidden { display: none; }
 @keyframes bounce {
   0%, 100% { transform: scale(1); }
   30% { transform: scale(1.2); }
   60% { transform: scale(0.95); }
+}
+
+/* Confetti canvas */
+.confetti-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
 }
 .celebration h2 {
   font-size: 28px;
@@ -780,8 +745,6 @@ body {
   .answer-word { font-size: 24px; }
   .progress-circle-wrap { width: 200px; height: 200px; }
   .progress-center .num { font-size: 38px; }
-  .swipe-actions .ac { padding: 12px 4px; }
-  .swipe-actions .ac .lab { font-size: 12px; }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -803,7 +766,6 @@ body {
     --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
     --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
   }
-  .reveal-btn { background: var(--primary); }
   .card { border: 1px solid var(--line); }
 }
 </style>
@@ -4033,7 +3995,7 @@ function renderHome() {
   // Start-button info
   const btn = document.getElementById('start-btn');
   if (state.progress.currentLevel > TOTAL_LEVELS) {
-    document.getElementById('start-sub').textContent = 'Alle niveaus voltooid! 🎉';
+    document.getElementById('start-sub').textContent = 'Alle niveaus voltooid!';
     btn.disabled = true;
   } else {
     document.getElementById('start-sub').textContent = `${SESSION_LENGTH} woorden`;
@@ -4142,8 +4104,8 @@ function renderCard() {
   document.getElementById('answer-word').textContent = answer;
   document.getElementById('answer-example').textContent = exA || '';
 
-  // Pre/post acties
-  document.getElementById('actions-pre').style.display = '';
+  // Verberg legacy knoppen
+  document.getElementById('actions-pre').style.display = 'none';
   document.getElementById('actions-post').style.display = 'none';
 
   // Progress
@@ -4160,8 +4122,6 @@ function revealCard() {
   if (session.revealed) return;
   session.revealed = true;
   document.getElementById('card').classList.add('revealed');
-  document.getElementById('actions-pre').style.display = 'none';
-  document.getElementById('actions-post').style.display = '';
 }
 
 function gradeCurrent(grade) {
@@ -4236,21 +4196,19 @@ function finishSession() {
   const completed = advancePhaseIfComplete();
 
   if (completed) {
-    // Ga naar celebration
     showScreen('screen-celebration');
+    document.getElementById('celeb-icon').classList.add('hidden');
+    launchConfetti(4000);
     if (completed.allDone) {
-      document.getElementById('celeb-icon').textContent = '🏆';
       document.getElementById('celeb-title').textContent = 'Alle 2500 woorden voltooid!';
       document.getElementById('celeb-text').textContent =
         'Magnifique ! Je hebt de complete Cartes-deck doorlopen. Tu parles français maintenant !';
     } else if (completed.levelComplete) {
-      document.getElementById('celeb-icon').textContent = '🎊';
       document.getElementById('celeb-title').textContent = `Niveau ${completed.level} voltooid!`;
       document.getElementById('celeb-text').textContent =
         `Bravo! Je beheerst niveau ${completed.level} in alle drie de richtingen. Op naar niveau ${completed.level + 1}!`;
     } else {
       const phaseName = phaseLabel(completed.phase);
-      document.getElementById('celeb-icon').textContent = '⭐';
       document.getElementById('celeb-title').textContent = `${phaseName} voltooid!`;
       document.getElementById('celeb-text').textContent =
         `Mooi werk! Je hebt fase ${phaseName} van niveau ${completed.level} doorlopen. Volgende fase: ${phaseLabel(state.progress.currentPhase)}.`;
@@ -4262,12 +4220,12 @@ function finishSession() {
   // Normale samenvatting
   showScreen('screen-summary');
   const ratio = totalAns > 0 ? session.good / totalAns : 0;
-  let emoji = '👏', title = 'Bien fait!';
-  if (ratio >= 0.95) { emoji = '🌟'; title = 'Magnifique!'; }
-  else if (ratio >= 0.8) { emoji = '🎉'; title = 'Très bien!'; }
-  else if (ratio >= 0.5) { emoji = '👍'; title = 'Bien fait!'; }
-  else { emoji = '💪'; title = 'Continue!'; }
-  document.getElementById('sum-emoji').textContent = emoji;
+  let title = 'Bien fait!';
+  if (ratio >= 0.95) { title = 'Magnifique!'; launchConfetti(3000); }
+  else if (ratio >= 0.8) { title = 'Très bien!'; launchConfetti(2000); }
+  else if (ratio >= 0.5) { title = 'Bien fait!'; }
+  else { title = 'Continue!'; }
+  document.getElementById('sum-emoji').textContent = '';
   document.getElementById('sum-title').textContent = title;
   document.getElementById('sum-quote').textContent =
     QUOTES[Math.floor(Math.random() * QUOTES.length)];
@@ -4306,6 +4264,10 @@ function setupCardGestures() {
     e.preventDefault && e.preventDefault();
   }
 
+  function clearDragClasses() {
+    card.classList.remove('drag-again', 'drag-hard', 'drag-good', 'drag-easy');
+  }
+
   function onMove(e) {
     if (!dragState || !dragState.active) return;
     const t = e.touches ? e.touches[0] : e;
@@ -4314,19 +4276,37 @@ function setupCardGestures() {
     const angle = dragState.dx * 0.05;
     card.style.transform = `translate(${dragState.dx}px, ${dragState.dy}px) rotate(${angle}deg)`;
 
-    // Bepaal dominante richting
     const ax = Math.abs(dragState.dx), ay = Math.abs(dragState.dy);
     const isHoriz = ax > ay;
-    document.getElementById('hint-left').style.opacity = (isHoriz && dragState.dx < -30) ? Math.min(1, ax / 100) : 0;
-    document.getElementById('hint-right').style.opacity = (isHoriz && dragState.dx > 30) ? Math.min(1, ax / 100) : 0;
-    document.getElementById('hint-up').style.opacity = (!isHoriz && dragState.dy < -30) ? Math.min(1, ay / 100) : 0;
-    document.getElementById('hint-down').style.opacity = (!isHoriz && dragState.dy > 30) ? Math.min(1, ay / 100) : 0;
+    const SHOW = 30;
+
+    // Reset hints en kleuring
+    ['left','right','up','down'].forEach(d => {
+      document.getElementById('hint-'+d).style.opacity = 0;
+    });
+    clearDragClasses();
+
+    // Bepaal dominante richting en kleur kaart
+    if (isHoriz && dragState.dx < -SHOW) {
+      document.getElementById('hint-left').style.opacity = Math.min(1, ax / 100);
+      if (ax > 50) card.classList.add('drag-again');
+    } else if (isHoriz && dragState.dx > SHOW) {
+      document.getElementById('hint-right').style.opacity = Math.min(1, ax / 100);
+      if (ax > 50) card.classList.add('drag-good');
+    } else if (!isHoriz && dragState.dy < -SHOW) {
+      document.getElementById('hint-up').style.opacity = Math.min(1, ay / 100);
+      if (ay > 50) card.classList.add('drag-hard');
+    } else if (!isHoriz && dragState.dy > SHOW) {
+      document.getElementById('hint-down').style.opacity = Math.min(1, ay / 100);
+      if (ay > 50) card.classList.add('drag-easy');
+    }
     e.preventDefault && e.preventDefault();
   }
 
   function onEnd(e) {
     if (!dragState || !dragState.active) return;
     card.classList.remove('dragging');
+    clearDragClasses();
     const dx = dragState.dx, dy = dragState.dy;
     const ax = Math.abs(dx), ay = Math.abs(dy);
     const THRESHOLD = 90;
@@ -4338,14 +4318,12 @@ function setupCardGestures() {
       if (dy < -THRESHOLD) grade = 1;       // Hard
       else if (dy > THRESHOLD) grade = 3;   // Easy
     }
-    // Hide hints
     ['left','right','up','down'].forEach(d => {
       document.getElementById('hint-'+d).style.opacity = 0;
     });
     if (grade >= 0) {
       gradeCurrent(grade);
     } else {
-      // Niet ver genoeg - terug
       card.style.transform = '';
     }
     dragState = null;
@@ -4478,6 +4456,58 @@ document.addEventListener('keydown', (e) => {
   else if (e.key === '3') gradeCurrent(2);
   else if (e.key === '4') gradeCurrent(3);
 });
+
+// ============================================================
+//   CONFETTI
+// ============================================================
+function launchConfetti(duration) {
+  duration = duration || 3000;
+  const canvas = document.createElement('canvas');
+  canvas.className = 'confetti-canvas';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const colors = ['#ff3b30','#af52de','#34c759','#ff9500','#5b8aff','#ffcc00','#6dd58c'];
+  const particles = [];
+  for (let i = 0; i < 120; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height * -0.5 - 20,
+      w: 6 + Math.random() * 6,
+      h: 4 + Math.random() * 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 4,
+      vy: 2 + Math.random() * 4,
+      rot: Math.random() * 360,
+      rotV: (Math.random() - 0.5) * 12,
+      opacity: 1
+    });
+  }
+  const start = Date.now();
+  function frame() {
+    const elapsed = Date.now() - start;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const fadeStart = duration * 0.7;
+    for (const p of particles) {
+      p.x += p.vx;
+      p.vy += 0.08;
+      p.y += p.vy;
+      p.rot += p.rotV;
+      if (elapsed > fadeStart) p.opacity = Math.max(0, 1 - (elapsed - fadeStart) / (duration - fadeStart));
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    }
+    if (elapsed < duration) requestAnimationFrame(frame);
+    else { canvas.remove(); }
+  }
+  requestAnimationFrame(frame);
+}
 
 // ============================================================
 //   INIT
