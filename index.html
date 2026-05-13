@@ -314,17 +314,47 @@ body {
 .phase-value .badge.mix { background: var(--orange-soft); color: var(--orange); }
 
 .phase-bar {
-  height: 8px;
+  height: 6px;
   background: var(--bg-soft);
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
   position: relative;
 }
 .phase-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--purple));
-  border-radius: 4px;
+  border-radius: 3px;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+  left: 0; top: 0;
+}
+.phase-bar-fill.streak { z-index: 2; }
+.phase-bar-fill.interval { z-index: 1; background: linear-gradient(90deg, #f0a500, #ffd000); opacity: 0.5; }
+.phase-bar-fill.fr-nl { background: var(--primary); }
+.phase-bar-fill.nl-fr { background: var(--purple); }
+.phase-dir-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.phase-dir-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  width: 42px;
+  flex-shrink: 0;
+}
+.phase-dir-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.phase-dir-count {
+  font-size: 11px;
+  color: var(--ink-soft);
+  width: 52px;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .start-btn {
@@ -839,18 +869,27 @@ body {
       </div>
 
       <div class="home-bottom">
+        <button class="start-btn" id="start-btn" data-action="start">Start sessie</button>
         <div class="phase-info" id="phase-info">
           <div class="phase-row">
             <span class="phase-label">Huidig</span>
             <span class="phase-value" id="phase-current">Niveau 1 — Blok 1<span class="badge fr-nl">FR→NL</span></span>
           </div>
-          <div class="phase-bar"><div class="phase-bar-fill" id="phase-bar"></div></div>
+          <div class="phase-dir-row">
+            <span class="phase-dir-label">FR→NL</span>
+            <div class="phase-bar" style="flex:1"><div class="phase-bar-fill streak fr-nl" id="bar-frnl-streak"></div><div class="phase-bar-fill interval" id="bar-frnl-interval"></div></div>
+            <span class="phase-dir-count" id="count-frnl">0/25</span>
+          </div>
+          <div class="phase-dir-row">
+            <span class="phase-dir-label">NL→FR</span>
+            <div class="phase-bar" style="flex:1"><div class="phase-bar-fill streak nl-fr" id="bar-nlfr-streak"></div><div class="phase-bar-fill interval" id="bar-nlfr-interval"></div></div>
+            <span class="phase-dir-count" id="count-nlfr">0/25</span>
+          </div>
           <div class="phase-row">
             <span class="phase-label" id="phase-detail">0/25 beheerst</span>
             <span class="phase-label" id="phase-due">— te oefenen</span>
           </div>
         </div>
-        <button class="start-btn" id="start-btn" data-action="start">Start sessie</button>
       </div>
     </div>
   </div>
@@ -4152,17 +4191,34 @@ function renderHome() {
   const phEl = document.getElementById('phase-current');
   phEl.innerHTML = `${blockLabel(blk)}<span class="badge ${phaseClass(ph)}">${phaseLabel(ph)}</span>`;
 
-  document.getElementById('phase-bar').style.width = (prog.pct * 100) + '%';
+  // Twee voortgangsbalken per richting
+  const blkWords = blockWords(blk);
+  const total25 = blkWords.length;
+  for (const dir of ['fr-nl', 'nl-fr']) {
+    const prefix = dir === 'fr-nl' ? 'frnl' : 'nlfr';
+    let streakCount = 0, intervalCount = 0;
+    for (const w of blkWords) {
+      const wid = wordId(w);
+      if (isBlockMastered(wid, dir)) streakCount++;
+      if (isMastered(wid, dir)) intervalCount++;
+    }
+    document.getElementById(`bar-${prefix}-streak`).style.width = (total25 ? streakCount / total25 * 100 : 0) + '%';
+    document.getElementById(`bar-${prefix}-interval`).style.width = (total25 ? intervalCount / total25 * 100 : 0) + '%';
+    document.getElementById(`count-${prefix}`).textContent = `${streakCount}/${total25}`;
+  }
+
   document.getElementById('phase-detail').textContent =
     `${prog.mastered}/${prog.total} beheerst (${Math.round(prog.pct * 100)}%)`;
 
-  // Te oefenen
+  // Te oefenen: nieuwe woorden + due woorden
   const now = Date.now();
   let dueCount = 0;
   for (let b = 0; b <= blk; b++) {
     for (const w of blockWords(b)) {
-      if (isDue(wordId(w), 'fr-nl', now)) dueCount++;
-      if (isDue(wordId(w), 'nl-fr', now)) dueCount++;
+      const wid = wordId(w);
+      for (const dir of ['fr-nl', 'nl-fr']) {
+        if (isNew(wid, dir) || isDue(wid, dir, now)) dueCount++;
+      }
     }
   }
   document.getElementById('phase-due').textContent = `${dueCount} te oefenen`;
