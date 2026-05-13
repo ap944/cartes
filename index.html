@@ -206,11 +206,19 @@ body {
   box-shadow: 0 0 0 2px var(--primary), 0 0 8px rgba(79, 124, 255, 0.4);
 }
 .grid-block.current {
-  animation: pulse-block 2s ease-in-out infinite;
+  animation: pulse-block 2.4s ease-in-out infinite;
 }
 @keyframes pulse-block {
-  0%, 100% { box-shadow: 0 0 0 2px var(--primary), 0 0 8px rgba(79, 124, 255, 0.4); }
-  50% { box-shadow: 0 0 0 3px var(--primary), 0 0 16px rgba(79, 124, 255, 0.6); }
+  0%, 100% {
+    background: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary), 0 0 8px rgba(79, 124, 255, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    background: var(--purple);
+    box-shadow: 0 0 0 3px var(--purple), 0 0 20px rgba(175, 82, 222, 0.55);
+    transform: scale(1.18);
+  }
 }
 .grid-block.done {
   background: var(--green-dark);
@@ -3657,8 +3665,10 @@ function isNew(wid, dir) {
 }
 
 // SM-2 grading
-function applyGrade(wid, dir, grade) {
-  // grade: 0=again, 1=hard, 2=good, 3=easy
+// retryCount: hoe vaak deze kaart al opnieuw is getoond in dezelfde sessie (0 = eerste keer)
+// Hogere retryCount → extra ease-straf → woord komt vaker terug in toekomstige sessies
+function applyGrade(wid, dir, grade, retryCount) {
+  retryCount = retryCount || 0;
   const c = getCardData(wid, dir);
   c.lastSeen = Date.now();
   const DAY = 24 * 60 * 60 * 1000;
@@ -3667,25 +3677,26 @@ function applyGrade(wid, dir, grade) {
     c.lapses += 1;
     c.reps = 0;
     c.interval = 0;
-    c.ease = Math.max(1.3, c.ease - 0.2);
+    c.ease = Math.max(1.3, c.ease - 0.2 - retryCount * 0.05);
     c.due = Date.now() + 1 * 60 * 1000;  // 1 min later in deze sessie
   } else {
     c.reps += 1;
     if (grade === 1) {
-      // Hard
+      // Hard — extra ease-straf bij retries
       if (c.reps === 1) c.interval = 1;
       else c.interval = Math.max(1, Math.round(c.interval * 1.2));
-      c.ease = Math.max(1.3, c.ease - 0.15);
+      c.ease = Math.max(1.3, c.ease - 0.15 - retryCount * 0.05);
     } else if (grade === 2) {
-      // Good
+      // Good — retries verlagen ease licht zodat woord vaker terugkomt
       if (c.reps === 1) c.interval = 1;
       else if (c.reps === 2) c.interval = 3;
       else c.interval = Math.round(c.interval * c.ease);
+      if (retryCount > 0) c.ease = Math.max(1.3, c.ease - retryCount * 0.05);
     } else if (grade === 3) {
-      // Easy
+      // Easy — retries dempen de ease-bonus
       if (c.reps === 1) c.interval = 3;
       else c.interval = Math.round(c.interval * c.ease * 1.3);
-      c.ease = Math.min(3.0, c.ease + 0.15);
+      c.ease = Math.min(3.0, c.ease + Math.max(0, 0.15 - retryCount * 0.05));
     }
     c.due = Date.now() + c.interval * DAY;
   }
@@ -4193,13 +4204,18 @@ function gradeCurrent(grade) {
     session.results.push({ wid, dir: c.dir, grade, level: c.word.l });
     if (grade >= 2) session.good++; else session.bad++;
   } else {
-    applyGrade(wid, c.dir, grade);
+    const rc = c.retryCount || 0;
+    applyGrade(wid, c.dir, grade, rc);
     if (grade >= 2) session.good++; else session.bad++;
     session.cardsShown++;
-    // Bij Again of Hard met fout: terug in de retry-stack
+
     if (grade === 0) {
-      // Voeg 3 plekken verder weer toe (binnen sessie)
-      session.retry.push({ ...c, retryCount: (c.retryCount || 0) + 1 });
+      // Again: terug aan einde van de sessie
+      session.retry.push({ ...c, retryCount: rc + 1 });
+    } else if (grade === 1) {
+      // Hard: terug, maar sneller — 3-5 kaarten verderop in de huidige stack
+      const insertAt = Math.min(session.idx + 4, session.cards.length);
+      session.cards.splice(insertAt, 0, { ...c, retryCount: rc + 1 });
     }
   }
 
@@ -4218,7 +4234,6 @@ function gradeCurrent(grade) {
     session.idx++;
     // Als we aan einde zijn maar er staan nog retries: voeg ze toe
     if (session.idx >= session.cards.length && session.retry.length > 0 && !session.isPlacement) {
-      // Voeg retries achteraan toe
       session.cards = session.cards.concat(session.retry);
       session.retry = [];
     }
