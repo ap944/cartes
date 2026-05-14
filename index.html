@@ -130,21 +130,22 @@ body {
 
 /* ============ HOOFDSCHERM ============ */
 .home {
-  padding: 20px 20px 20px;
+  padding: 0 20px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   flex: 1;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 0;
   overflow: hidden;
 }
 .home-head {
   text-align: center;
-  margin-top: 0;
+  margin: 4px 0 0;
+  flex-shrink: 0;
 }
 .home-head h1 {
-  font-size: 34px;
+  font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.02em;
   background: linear-gradient(135deg, var(--primary), var(--purple));
@@ -153,166 +154,60 @@ body {
   background-clip: text;
 }
 .home-head .subtitle {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--ink-soft);
-  margin-top: 2px;
+  margin-top: 0;
   letter-spacing: 0.02em;
 }
 
 /* Blokkengrid */
-.block-grid-wrap {
+/* Cirkel-navigatie */
+.circle-nav-wrap {
   width: 100%;
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 0;
 }
-.block-grid {
-  display: grid;
-  grid-template-columns: auto repeat(10, 1fr);
-  gap: 3px;
+.circle-nav {
+  position: relative;
+  width: min(85vw, 360px);
+  height: min(85vw, 360px);
+}
+.circle-nav svg {
   width: 100%;
-  max-width: 340px;
+  height: 100%;
 }
-.grid-level-label {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--ink-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-right: 4px;
-}
-.grid-block {
-  aspect-ratio: 1;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  font-weight: 600;
-  transition: transform 0.15s, background 0.3s;
-}
-.grid-block.locked {
-  background: var(--bg-soft);
-  color: var(--ink-muted);
-  opacity: 0.5;
-}
-.grid-block.active {
-  background: var(--primary);
-  color: #fff;
-  box-shadow: 0 0 0 2px var(--primary), 0 0 8px rgba(79, 124, 255, 0.4);
-}
-.grid-block.current {
-  animation: pulse-block 2.4s ease-in-out infinite;
-}
-@keyframes pulse-block {
-  0%, 100% {
-    background: var(--primary);
-    box-shadow: 0 0 0 2px var(--primary), 0 0 8px rgba(79, 124, 255, 0.3);
-    transform: scale(1);
-  }
-  50% {
-    background: var(--purple);
-    box-shadow: 0 0 0 3px var(--purple), 0 0 20px rgba(175, 82, 222, 0.55);
-    transform: scale(1.18);
-  }
-}
-.grid-block.done {
-  background: var(--green-dark);
-  color: #fff;
-}
-.grid-block.gold {
-  background: linear-gradient(135deg, #f0a500, #ffd000);
-  color: #1a1a2e;
-  box-shadow: 0 0 6px rgba(255, 208, 0, 0.4);
-}
-.grid-block.phase-1 {
-  background: #1a6b30;
-  color: #fff;
-}
-.grid-block.phase-2 {
-  background: #1a7f36;
-  color: #fff;
-}
-.total-mastered {
-  font-size: 13px;
-  color: var(--ink-soft);
-  margin-top: 10px;
-  text-align: center;
-}
-
-/* Start knop */
-.start-btn {
-  width: 100%;
-  padding: 16px;
-  border: none;
-  border-radius: var(--radius);
+.circle-start {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56.25%;
+  height: 56.25%;
+  border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--purple));
   color: #fff;
-  font-size: 17px;
+  border: none;
+  font-family: inherit;
+  font-size: 22px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s, opacity 0.15s;
+  box-shadow: 0 4px 20px rgba(79, 124, 255, 0.4);
+  transition: transform 0.15s, box-shadow 0.2s;
+  z-index: 10;
+  -webkit-appearance: none;
   letter-spacing: 0.02em;
 }
-.start-btn:active {
-  transform: scale(0.97);
+.circle-start:active {
+  transform: translate(-50%, -50%) scale(0.96);
+  box-shadow: 0 2px 10px rgba(79, 124, 255, 0.3);
 }
+.circle-start[disabled] { opacity: 0.5; cursor: not-allowed; }
 
-/* Home bottom section */
-.home-bottom {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex-shrink: 0;
-  padding-bottom: env(safe-area-inset-bottom, 0);
-}
-
-/* Fase-info */
-.phase-info {
-  background: var(--bg-elev);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  width: 100%;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex-shrink: 0;
-}
-.phase-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.phase-label {
-  font-size: 13px;
-  color: var(--ink-soft);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-.phase-value {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.phase-value .badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-left: 6px;
-}
-.phase-value .badge.fr-nl { background: var(--primary-soft); color: var(--primary-deep); }
-.phase-value .badge.nl-fr { background: var(--purple-soft); color: var(--purple); }
-.phase-value .badge.mix { background: var(--orange-soft); color: var(--orange); }
-
+/* Phase bars (used in celebration screen) */
 .phase-bar {
   height: 6px;
   background: var(--bg-soft);
@@ -343,50 +238,12 @@ body {
   width: 42px;
   flex-shrink: 0;
 }
-.phase-dir-bar-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
 .phase-dir-count {
   font-size: 11px;
   color: var(--ink-soft);
   width: 52px;
   text-align: right;
   flex-shrink: 0;
-}
-
-.start-btn {
-  width: 100%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-deep));
-  color: white;
-  border: none;
-  font-family: inherit;
-  font-size: 19px;
-  font-weight: 600;
-  padding: 18px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(79, 124, 255, 0.35);
-  transition: transform 0.1s, box-shadow 0.2s;
-  letter-spacing: 0.01em;
-  -webkit-appearance: none;
-}
-.start-btn:active {
-  transform: scale(0.98);
-  box-shadow: 0 2px 8px rgba(79, 124, 255, 0.3);
-}
-.start-btn[disabled] { opacity: 0.5; cursor: not-allowed; }
-
-.start-btn .sub {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  opacity: 0.9;
-  margin-top: 2px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 
 /* ============ KAART-SESSIE ============ */
@@ -837,8 +694,8 @@ body {
 @media (max-width: 380px) {
   .card-word { font-size: 32px; }
   .answer-word { font-size: 24px; }
-  .block-grid { max-width: 280px; gap: 2px; }
-  .grid-block { font-size: 8px; }
+  .circle-nav { width: min(80vw, 280px); height: min(80vw, 280px); }
+  .circle-start { font-size: 18px; }
 }
 
 .card { border: 1px solid var(--line); }
@@ -863,34 +720,12 @@ body {
         <div class="subtitle">Frans · Nederlands</div>
       </div>
 
-      <div class="block-grid-wrap">
-        <div class="block-grid" id="block-grid"></div>
-        <div class="total-mastered" id="total-mastered">0 / 2500 woorden beheerst</div>
-      </div>
-
-      <div class="home-bottom">
-        <button class="start-btn" id="start-btn" data-action="start">Start sessie</button>
-        <div class="phase-info" id="phase-info">
-          <div class="phase-row">
-            <span class="phase-label">Huidig</span>
-            <span class="phase-value" id="phase-current">Niveau 1 — Blok 1<span class="badge fr-nl">FR→NL</span></span>
-          </div>
-          <div class="phase-dir-row">
-            <span class="phase-dir-label">FR→NL</span>
-            <div class="phase-bar" style="flex:1"><div class="phase-bar-fill streak fr-nl" id="bar-frnl-streak"></div><div class="phase-bar-fill interval" id="bar-frnl-interval"></div></div>
-            <span class="phase-dir-count" id="count-frnl">0/25</span>
-          </div>
-          <div class="phase-dir-row">
-            <span class="phase-dir-label">NL→FR</span>
-            <div class="phase-bar" style="flex:1"><div class="phase-bar-fill streak nl-fr" id="bar-nlfr-streak"></div><div class="phase-bar-fill interval" id="bar-nlfr-interval"></div></div>
-            <span class="phase-dir-count" id="count-nlfr">0/25</span>
-          </div>
-          <div class="phase-row">
-            <span class="phase-label" id="phase-detail">0/25 beheerst</span>
-            <span class="phase-label" id="phase-due">— te oefenen</span>
-          </div>
+      <div class="circle-nav-wrap">
+        <div class="circle-nav" id="circle-nav">
+          <svg viewBox="0 0 320 320" id="circle-svg"></svg>
+          <button class="circle-start" id="start-btn" data-action="start">Start</button>
         </div>
-      </div>
+        </div>
     </div>
   </div>
 
@@ -1026,8 +861,17 @@ body {
           <h2 id="celeb-title">Niveau 1 voltooid!</h2>
           <p id="celeb-text">Geweldig — je beheerst nu 90% van niveau 1 in alle drie de richtingen.</p>
         </div>
-        <div class="stats-grid" id="celeb-stats">
-          <div class="stat-card full"><div class="stat-num" id="celeb-known">0</div><div class="stat-lab">Woorden beheerst</div></div>
+        <div id="celeb-progress" style="width:100%;display:flex;flex-direction:column;gap:8px;margin-top:16px">
+          <div class="phase-dir-row">
+            <span class="phase-dir-label">FR→NL</span>
+            <div class="phase-bar" style="flex:1"><div class="phase-bar-fill streak fr-nl" id="celeb-bar-frnl-streak"></div><div class="phase-bar-fill interval" id="celeb-bar-frnl-interval"></div></div>
+            <span class="phase-dir-count" id="celeb-count-frnl">0/25</span>
+          </div>
+          <div class="phase-dir-row">
+            <span class="phase-dir-label">NL→FR</span>
+            <div class="phase-bar" style="flex:1"><div class="phase-bar-fill streak nl-fr" id="celeb-bar-nlfr-streak"></div><div class="phase-bar-fill interval" id="celeb-bar-nlfr-interval"></div></div>
+            <span class="phase-dir-count" id="celeb-count-nlfr">0/25</span>
+          </div>
         </div>
       </div>
       <div class="summary-actions">
@@ -1058,16 +902,10 @@ body {
         </div>
       </div>
       <div class="settings-section">
-        <h3>Statistieken</h3>
-        <div class="settings-list" id="stats-list">
-          <!-- gevuld door JS -->
-        </div>
-      </div>
-      <div class="settings-section">
         <h3>Gevorderd</h3>
         <div class="settings-list">
           <button class="settings-row danger" data-action="reset">
-            <span>Alle voortgang wissen</span><span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+            <span>Alle voortgang wissen</span><span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></span>
           </button>
         </div>
       </div>
@@ -3627,7 +3465,8 @@ function defaultState() {
       currentBlock: 0,         // 0-99 (block index)
       currentPhase: 'fr-nl',   // 'fr-nl', 'nl-fr', 'mix'
       placementDone: false,
-      skippedBeforeBlock: 0    // blokken vóór dit punt zijn geskipt door plaatsingstest
+      skippedBeforeBlock: 0,   // blokken vóór dit punt zijn geskipt door plaatsingstest
+      mixFlawless: 0           // aantal opeenvolgende foutloze mix-sessies (huidig blok)
     },
     sessionStats: {  // recente sessies voor adaptieve mix
       recentRatios: []  // ratios goed/fout van laatste 5 sessies
@@ -3831,26 +3670,6 @@ function isBlockFullyMastered(blockIdx) {
   return ws.length > 0 && ws.every(w => isMasteredAllDirs(wordId(w)));
 }
 
-// Bepaal de status van een blok: 'locked', 'active', 'phase-1', 'phase-2', 'done', 'gold'
-function blockStatus(blockIdx) {
-  const cur = state.progress.currentBlock;
-  if (blockIdx > cur) return 'locked';
-  if (blockIdx === cur) return 'active';
-  // Eerdere blokken: check of alle fasen klaar zijn
-  const allDone = PHASES.every(ph => isBlockPhaseComplete(blockIdx, ph));
-  if (allDone) {
-    // Goud als alle woorden echt beheerst zijn (interval ≥ 21 dagen, beide richtingen)
-    if (isBlockFullyMastered(blockIdx)) return 'gold';
-    return 'done';
-  }
-  // Gedeeltelijk klaar (zou niet moeten maar als fallback)
-  const frDone = isBlockPhaseComplete(blockIdx, 'fr-nl');
-  const nlDone = isBlockPhaseComplete(blockIdx, 'nl-fr');
-  if (frDone && nlDone) return 'phase-2';
-  if (frDone) return 'phase-1';
-  return 'active';
-}
-
 function nextPhase(currentPhase) {
   const idx = PHASES.indexOf(currentPhase);
   if (idx < PHASES.length - 1) return PHASES[idx + 1];
@@ -3860,13 +3679,20 @@ function nextPhase(currentPhase) {
 function advancePhaseIfComplete() {
   const blk = state.progress.currentBlock;
   const ph = state.progress.currentPhase;
-  if (!isBlockPhaseComplete(blk, ph)) return null;
+
+  // Mix-fase: vereist 2 opeenvolgende foutloze sessies (ipv per-woord streak)
+  if (ph === 'mix') {
+    if ((state.progress.mixFlawless || 0) < 2) return null;
+  } else {
+    if (!isBlockPhaseComplete(blk, ph)) return null;
+  }
 
   const info = getBlockInfo(blk);
   const completed = { block: blk, level: info.level, blockInLevel: info.blockInLevel, phase: ph, blockComplete: false, levelComplete: false };
   const np = nextPhase(ph);
   if (np) {
     state.progress.currentPhase = np;
+    if (np === 'mix') state.progress.mixFlawless = 0; // reset bij start mix-fase
   } else {
     // Mix was klaar → volgend blok
     completed.blockComplete = true;
@@ -3889,6 +3715,7 @@ function advancePhaseIfComplete() {
       }
       state.progress.currentBlock = blk + 1;
       state.progress.currentPhase = 'fr-nl';
+      state.progress.mixFlawless = 0; // reset voor nieuw blok
     } else {
       // Alles voltooid!
       completed.allDone = true;
@@ -4161,105 +3988,146 @@ function phaseLabel(phase) {
   if (phase === 'nl-fr') return 'NL→FR';
   return 'Mix';
 }
-function phaseClass(phase) {
-  if (phase === 'fr-nl') return 'fr-nl';
-  if (phase === 'nl-fr') return 'nl-fr';
-  return 'mix';
-}
-
 function renderHome() {
   const blk = state.progress.currentBlock;
-  const ph = state.progress.currentPhase;
   const info = getBlockInfo(blk);
-  const prog = blockPhaseProgress(blk, ph);
+  const cx = 160, cy = 160;
 
-  // Block grid (10×10)
-  const grid = document.getElementById('block-grid');
-  let html = '';
-  for (let lvl = 1; lvl <= TOTAL_LEVELS; lvl++) {
-    html += `<div class="grid-level-label">N${lvl}</div>`;
-    for (let b = 0; b < BLOCKS_PER_LEVEL; b++) {
-      const idx = (lvl - 1) * BLOCKS_PER_LEVEL + b;
-      const st = blockStatus(idx);
-      const isCurrent = idx === blk;
-      html += `<div class="grid-block ${st}${isCurrent ? ' current' : ''}" title="${blockLabel(idx)}">${b + 1}</div>`;
-    }
+  // --- Annular sector (donut wedge) with straight edges ---
+  function sectorPath(cx, cy, rIn, rOut, startAngle, endAngle) {
+    const s = startAngle - Math.PI / 2;
+    const e = endAngle - Math.PI / 2;
+    const cos_s = Math.cos(s), sin_s = Math.sin(s);
+    const cos_e = Math.cos(e), sin_e = Math.sin(e);
+    const large = (endAngle - startAngle) > Math.PI ? 1 : 0;
+    return [
+      `M ${cx + rOut * cos_s} ${cy + rOut * sin_s}`,
+      `A ${rOut} ${rOut} 0 ${large} 1 ${cx + rOut * cos_e} ${cy + rOut * sin_e}`,
+      `L ${cx + rIn * cos_e} ${cy + rIn * sin_e}`,
+      `A ${rIn} ${rIn} 0 ${large} 0 ${cx + rIn * cos_s} ${cy + rIn * sin_s}`,
+      'Z'
+    ].join(' ');
   }
-  grid.innerHTML = html;
 
-  // Fase info
-  const phEl = document.getElementById('phase-current');
-  phEl.innerHTML = `${blockLabel(blk)}<span class="badge ${phaseClass(ph)}">${phaseLabel(ph)}</span>`;
+  // --- Block status for segment coloring ---
+  // Returns: 'locked' | 'empty' | 'fr-nl' | 'nl-fr' | 'mix' | 'gold'
+  function blockSegmentStatus(blockIdx) {
+    const cur = state.progress.currentBlock;
+    if (blockIdx > cur) return 'locked';
+    if (isBlockFullyMastered(blockIdx)) return 'gold';
+    // Past blocks that have all 3 phases complete
+    const allDone = PHASES.every(ph => isBlockPhaseComplete(blockIdx, ph));
+    if (allDone) return 'mix';
+    const frDone = isBlockPhaseComplete(blockIdx, 'fr-nl');
+    const nlDone = isBlockPhaseComplete(blockIdx, 'nl-fr');
+    if (frDone && nlDone) return 'nl-fr';
+    if (frDone) return 'fr-nl';
+    // Unlocked but no phase complete (current or skipped)
+    return 'empty';
+  }
 
-  // Twee voortgangsbalken per richting
-  const blkWords = blockWords(blk);
+  // --- Level status based on blocks ---
+  function levelSegmentStatus(level) {
+    const lvlStart = (level - 1) * BLOCKS_PER_LEVEL;
+    const blocks = Array.from({length: BLOCKS_PER_LEVEL}, (_, i) => lvlStart + i);
+    const cur = state.progress.currentBlock;
+    if (lvlStart > cur) return 'locked';
+    // Check if all words have interval >= 21d
+    const lvlWs = levelWords(level);
+    if (lvlWs.length > 0 && lvlWs.every(w => isMasteredAllDirs(wordId(w)))) return 'gold';
+    // All mix phases done?
+    if (blocks.every(idx => PHASES.every(ph => isBlockPhaseComplete(idx, ph)))) return 'mix';
+    // All NL→FR done?
+    if (blocks.every(idx => isBlockPhaseComplete(idx, 'fr-nl') && isBlockPhaseComplete(idx, 'nl-fr'))) return 'nl-fr';
+    // All FR→NL done?
+    if (blocks.every(idx => isBlockPhaseComplete(idx, 'fr-nl'))) return 'fr-nl';
+    return 'empty';
+  }
+
+  // --- Color mapping ---
+  const COL_LOCKED = '#1a1e24';
+  const COL_EMPTY  = '#2a2f38';
+  const COL_FR_NL  = '#3a7d44'; // lichtgroen (kader)
+  const COL_NL_FR  = '#3a7d44'; // lichtgroen (vulling)
+  const COL_MIX    = '#1a5c28'; // donkergroen
+  const COL_BG     = '#0d1117'; // donkere achtergrond voor kader-segmenten
+  const GAP_COL    = '#0a0c0f'; // zelfde als page bg voor scheidingslijnen
+
+  const gap = 0.02; // radians gap (thin straight lines)
+  const segAngle = (2 * Math.PI) / 10;
+
+  let svg = `<defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c8940a"/>
+      <stop offset="30%" stop-color="#e8b910"/>
+      <stop offset="60%" stop-color="#f5d442"/>
+      <stop offset="100%" stop-color="#d4a017"/>
+    </linearGradient>
+  </defs>`;
+
+  function drawRing(rIn, rOut, count, statusFn) {
+    let out = '';
+    for (let i = 0; i < count; i++) {
+      const startA = i * segAngle + gap / 2;
+      const endA = (i + 1) * segAngle - gap / 2;
+      const status = statusFn(i);
+      const d = sectorPath(cx, cy, rIn, rOut, startA, endA);
+      let fill, stroke = 'none', strokeW = 0, opacity = 1;
+      switch (status) {
+        case 'locked': fill = COL_LOCKED; opacity = 0.5; break;
+        case 'empty':  fill = COL_EMPTY; break;
+        case 'fr-nl':  fill = COL_BG; stroke = COL_FR_NL; strokeW = 2; break;
+        case 'nl-fr':  fill = COL_NL_FR; break;
+        case 'mix':    fill = COL_MIX; break;
+        case 'gold':   fill = 'url(#goldGrad)'; break;
+        default:       fill = COL_EMPTY; break;
+      }
+      out += `<path d="${d}" fill="${fill}" opacity="${opacity}"`;
+      if (strokeW > 0) out += ` stroke="${stroke}" stroke-width="${strokeW}"`;
+      out += '/>';
+    }
+    return out;
+  }
+
+  // Outer ring: 10 levels (radius 130-155)
+  svg += drawRing(130, 155, 10, i => levelSegmentStatus(i + 1));
+
+  // Inner ring: 10 blocks of current level (radius 96-124)
+  const lvlStart = (info.level - 1) * BLOCKS_PER_LEVEL;
+  svg += drawRing(96, 124, 10, i => blockSegmentStatus(lvlStart + i));
+
+  document.getElementById('circle-svg').innerHTML = svg;
+
+  // Start knop
+  const startBtn = document.getElementById('start-btn');
+  if (blk >= TOTAL_BLOCKS) {
+    startBtn.removeAttribute('data-action');
+    startBtn.disabled = true;
+  } else {
+    startBtn.setAttribute('data-action', 'start');
+    startBtn.disabled = false;
+  }
+}
+
+// Helper to render progress bars for a block (used in celebration screen)
+function renderBlockProgressBars(prefix, blockIdx) {
+  const blkWords = blockWords(blockIdx);
   const total25 = blkWords.length;
   for (const dir of ['fr-nl', 'nl-fr']) {
-    const prefix = dir === 'fr-nl' ? 'frnl' : 'nlfr';
+    const dirKey = dir === 'fr-nl' ? 'frnl' : 'nlfr';
     let streakCount = 0, intervalCount = 0;
     for (const w of blkWords) {
       const wid = wordId(w);
       if (isBlockMastered(wid, dir)) streakCount++;
       if (isMastered(wid, dir)) intervalCount++;
     }
-    document.getElementById(`bar-${prefix}-streak`).style.width = (total25 ? streakCount / total25 * 100 : 0) + '%';
-    document.getElementById(`bar-${prefix}-interval`).style.width = (total25 ? intervalCount / total25 * 100 : 0) + '%';
-    document.getElementById(`count-${prefix}`).textContent = `${streakCount}/${total25}`;
+    const streakEl = document.getElementById(`${prefix}-bar-${dirKey}-streak`);
+    const intervalEl = document.getElementById(`${prefix}-bar-${dirKey}-interval`);
+    const countEl = document.getElementById(`${prefix}-count-${dirKey}`);
+    if (streakEl) streakEl.style.width = (total25 ? streakCount / total25 * 100 : 0) + '%';
+    if (intervalEl) intervalEl.style.width = (total25 ? intervalCount / total25 * 100 : 0) + '%';
+    if (countEl) countEl.textContent = `${streakCount}/${total25}`;
   }
-
-  document.getElementById('phase-detail').textContent =
-    `${prog.mastered}/${prog.total} beheerst (${Math.round(prog.pct * 100)}%)`;
-
-  // Te oefenen: nieuwe woorden + due woorden
-  const now = Date.now();
-  let dueCount = 0;
-  for (let b = 0; b <= blk; b++) {
-    for (const w of blockWords(b)) {
-      const wid = wordId(w);
-      for (const dir of ['fr-nl', 'nl-fr']) {
-        if (isNew(wid, dir) || isDue(wid, dir, now)) dueCount++;
-      }
-    }
-  }
-  document.getElementById('phase-due').textContent = `${dueCount} te oefenen`;
-
-  // Totaal beheerst
-  const total = totalMastered();
-  document.getElementById('total-mastered').textContent = `${total} / ${WORDS.length} woorden beheerst`;
-
-  // Start knop disabled als alles klaar
-  const startBtn = document.getElementById('start-btn');
-  if (blk >= TOTAL_BLOCKS) {
-    startBtn.removeAttribute('data-action');
-    startBtn.style.opacity = '0.5';
-  } else {
-    startBtn.setAttribute('data-action', 'start');
-    startBtn.style.opacity = '';
-  }
-}
-
-function renderStats() {
-  const list = document.getElementById('stats-list');
-  let html = '';
-  for (let lvl = 1; lvl <= TOTAL_LEVELS; lvl++) {
-    const curBlock = state.progress.currentBlock;
-    const lvlStart = (lvl - 1) * BLOCKS_PER_LEVEL;
-    const lvlEnd = lvlStart + BLOCKS_PER_LEVEL - 1;
-    const isCurrentLevel = curBlock >= lvlStart && curBlock <= lvlEnd;
-    html += `<div class="settings-row" style="cursor:default; ${isCurrentLevel ? 'background: var(--primary-soft);' : ''}">
-      <div style="width:100%">
-        <div style="font-weight:600">Niveau ${lvl}${isCurrentLevel ? ' · huidig' : ''}</div>
-        <div style="display:flex;gap:3px;margin-top:6px;flex-wrap:wrap">`;
-    for (let b = 0; b < BLOCKS_PER_LEVEL; b++) {
-      const idx = lvlStart + b;
-      const st = blockStatus(idx);
-      const color = st === 'gold' ? 'linear-gradient(135deg, #f0a500, #ffd000)' : st === 'done' ? 'var(--green-dark)' : st === 'active' ? 'var(--primary)' : st === 'phase-1' ? '#1a6b30' : st === 'phase-2' ? '#1a7f36' : 'var(--bg-soft)';
-      const txtColor = st === 'gold' ? '#1a1a2e' : st === 'locked' ? 'var(--ink-muted)' : '#fff';
-      html += `<div style="width:18px;height:18px;border-radius:3px;background:${color};font-size:9px;display:flex;align-items:center;justify-content:center;color:${txtColor}">${b+1}</div>`;
-    }
-    html += `</div></div></div>`;
-  }
-  list.innerHTML = html;
 }
 
 // ============================================================
@@ -4435,6 +4303,15 @@ function finishSession() {
     }
   }
   state.lastSessionEnded = Date.now();
+
+  // Mix-fase: track foutloze sessies (2× foutloos = doorstromen)
+  if (state.progress.currentPhase === 'mix') {
+    if (session.bad === 0 && totalAns > 0) {
+      state.progress.mixFlawless = (state.progress.mixFlawless || 0) + 1;
+    } else {
+      state.progress.mixFlawless = 0;
+    }
+  }
   saveState();
 
   // Check op fase/niveau-voltooiing
@@ -4467,7 +4344,7 @@ function finishSession() {
       document.getElementById('celeb-text').textContent =
         `Mooi werk! Fase ${phaseName} van ${blockLabel(completed.block)} is klaar. Volgende fase: ${phaseLabel(state.progress.currentPhase)}.`;
     }
-    document.getElementById('celeb-known').textContent = totalMastered();
+    renderBlockProgressBars('celeb', state.progress.currentBlock);
     return;
   }
 
@@ -4634,11 +4511,12 @@ function importState(file) {
 }
 
 function resetAll() {
-  if (!confirm('Alle voortgang wissen? Dit kan niet ongedaan worden gemaakt.')) return;
+  if (!confirm('Weet je zeker dat je alle voortgang wilt wissen?')) return;
+  if (!confirm('Dit verwijdert al je resultaten permanent. Typ OK om te bevestigen.')) return;
   state = defaultState();
   saveState();
   renderHome();
-  toast('Alles gereset');
+  toast('Alle voortgang gewist');
   showScreen('screen-home');
   // Trigger placement opnieuw
   setTimeout(() => {
@@ -4654,7 +4532,7 @@ document.addEventListener('click', (e) => {
   if (!btn) return;
   const a = btn.dataset.action;
 
-  if (a === 'open-settings') { renderStats(); showScreen('screen-settings'); }
+  if (a === 'open-settings') { showScreen('screen-settings'); }
   else if (a === 'back-home') { renderHome(); showScreen('screen-home'); }
   else if (a === 'start') {
     if (!state.progress.placementDone) {
