@@ -3680,9 +3680,9 @@ function advancePhaseIfComplete() {
   const blk = state.progress.currentBlock;
   const ph = state.progress.currentPhase;
 
-  // Mix-fase: vereist 2 opeenvolgende foutloze sessies (ipv per-woord streak)
+  // Mix-fase: vereist 1 foutloze sessie (0 fouten)
   if (ph === 'mix') {
-    if ((state.progress.mixFlawless || 0) < 2) return null;
+    if ((state.progress.mixFlawless || 0) < 1) return null;
   } else {
     if (!isBlockPhaseComplete(blk, ph)) return null;
   }
@@ -3798,7 +3798,9 @@ function pickSessionCards() {
     } else {
       const dir = ph;
       if (isMastered(wid, dir)) continue;
-      if (isNew(wid, dir) || (!isDue(wid, dir, now) && !state.cards[getCardKey(wid, dir)])) {
+      // Voeg toe als woord nog niet blok-beheerst is (streak < 2), ongeacht due-datum
+      // Zo worden woorden met streak:1 die nog niet "due" zijn toch elke sessie aangeboden
+      if (!isBlockMastered(wid, dir)) {
         newCands.push({ word: w, dir, type: 'new' });
       }
     }
